@@ -124,4 +124,49 @@ erDiagram
         decimal subtotal
     }
 ```
+Como Rodar o Projeto
 
+Siga os passos abaixo para executar o sistema localmente.
+
+1. Clonar o repositório
+git clone <link-do-repositorio>
+cd sistema-petshop
+
+2. Criar e ativar o ambiente virtual
+
+Windows
+
+python -m venv venv
+venv\Scripts\activate
+
+
+Linux / Mac
+
+python3 -m venv venv
+source venv/bin/activate
+
+3. Instalar dependências
+
+Instale o Django manualmente (caso não exista requirements.txt):
+
+pip install django
+
+4. Configurar o Banco de Dados
+
+O projeto utiliza SQLite, já incluso no arquivo db.sqlite3.
+Caso necessário, execute as migrações:
+
+python manage.py migrate
+
+5. Criar um Superusuário (Admin)
+
+Para acessar o painel administrativo do Django:
+
+python manage.py createsuperuser
+
+6. Iniciar o Servidor
+python manage.py runserver
+
+
+Acesse no navegador:
+👉 http://127.0.0.1:8000/
