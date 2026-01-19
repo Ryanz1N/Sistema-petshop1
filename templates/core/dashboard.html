@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Painel de Controle</h2>
+    </div>
+    <div class="btn-group gap-2">
+        <a href="{% url 'historico' %}" class="btn btn-primary">Histórico</a>
+        <a href="{% url 'pdv' %}" class="btn btn-primary ">PDV</a>
+        <a href="{% url 'cadastro_cliente' %}" class="btn btn-success text-white">Novo Cliente</a>
+        <a href="{% url 'novo_agendamento' %}" class="btn btn-success">Agendamento</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card bg-light border-0 shadow-sm h-100">
+            <div class="card-header bg-primary text-white text-center">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="?data={{ data_anterior|date:'Y-m-d' }}" class="text-white text-decoration-none fs-5 fw-bold" title="Dia Anterior">
+                        &larr;
+                    </a>
+                    
+                    <div class="lh-1">
+                        <div class="fw-bold">Marcado</div>
+                        <small style="font-size: 0.8rem;">
+                            {% if data_filtro == hoje %}
+                                Hoje
+                            {% else %}
+                                {{ data_filtro|date:"d/m/Y" }}
+                            {% endif %}
+                        </small>
+                    </div>
+
+                    <a href="?data={{ data_proxima|date:'Y-m-d' }}" class="text-white text-decoration-none fs-5 fw-bold" title="Próximo Dia">
+                        &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body p-2" style="background-color: #f8f9fa;">
+                {% for item in coluna_marcado %}
+                <div class="card mb-2 border-primary border-start border-4 shadow-sm">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ item.pet.nome }}</strong>
+                            <small class="text-muted fw-bold">{{ item.data_inicio|date:"H:i" }}</small>
+                        </div>
+                        <small class="d-block text-truncate">{{ item.servico.nome }}</small>
+                        <small class="text-muted d-block">Dono: {{ item.pet.dono.nome }}</small>
+                        <a href="{% url 'detalhe_agendamento' item.id %}" class="btn btn-sm btn-outline-primary w-100 mt-2">Atender</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted mt-5">
+                    <p class="mb-1">Nada para este dia.</p>
+                    {% if data_filtro != hoje %}
+                        <a href="?data={{ hoje|date:'Y-m-d' }}" class="btn btn-sm btn-outline-secondary">Voltar para Hoje</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light border-0 shadow-sm h-100">
+            <div class="card-header bg-warning text-dark fw-bold text-center">
+                Em Serviço / Banho
+            </div>
+            <div class="card-body p-2" style="background-color: #fff3cd;">
+                {% for item in coluna_servico %}
+                <div class="card mb-2 border-warning border-start border-4 shadow-sm">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ item.pet.nome }}</strong>
+                            {% if item.pet.alertas %}
+                                <span class="badge bg-danger" title="{{ item.pet.alertas }}">!</span>
+                            {% endif %}
+                        </div>
+                        <small class="d-block text-muted">{{ item.servico.nome }}</small>
+                        <small>Func: {{ item.funcionario.username|default:"--" }}</small>
+                        <div class="text-end">
+                            <small class="text-muted">{{ item.data_inicio|date:"d/m H:i" }}</small>
+                        </div>
+                        <a href="{% url 'detalhe_agendamento' item.id %}" class="btn btn-sm btn-primary w-100 mt-2">Gerenciar</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted mt-3">Nenhum animal no banho.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light border-0 shadow-sm h-100">
+            <div class="card-header bg-success text-white fw-bold text-center">
+                Prontos / A Sair
+            </div>
+            <div class="card-body p-2" style="background-color: #d1e7dd;">
+                {% for item in coluna_pronto %}
+                <div class="card mb-2 border-success border-start border-4 shadow-sm">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ item.pet.nome }}</strong>
+                            <span class="badge bg-success">Aguard. Pagto</span>
+                        </div>
+                        <small class="text-muted">Dono: {{ item.pet.dono.nome }}</small>
+                        <div class="text-end">
+                            <small class="text-muted">{{ item.data_inicio|date:"d/m H:i" }}</small>
+                        </div>
+                        <a href="{% url 'detalhe_agendamento' item.id %}" class="btn btn-sm btn-success w-100 mt-2">Checkout</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted mt-3">Nenhum pronto.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

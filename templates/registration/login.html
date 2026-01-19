@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 400px;">
+        <div class="card-body p-5">
+            
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark">Bem-vindo(a)</h3>
+                <p class="text-muted small">Faça login com seu e-mail cadastrado</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">
+                        {{ form.non_field_errors.0 }}
+                    </div>
+                {% endif %}
+
+                <div class="form-floating mb-3">
+                    {{ form.username }}
+                    <label for="{{ form.username.id_for_label }}">E-mail</label>
+                </div>
+
+                <div class="form-floating mb-4">
+                    {{ form.password }}
+                    <label for="{{ form.password.id_for_label }}">Senha</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm">
+                    ENTRAR
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top">
+                <small class="text-muted">Novo funcionário?</small><br>
+                <a href="{% url 'register' %}" class="text-decoration-none fw-bold text-primary">Criar Cadastro</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

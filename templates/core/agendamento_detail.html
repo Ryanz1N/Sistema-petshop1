@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-3">← Voltar ao Painel</a>
+    
+    <div class="alert {% if agendamento.status == 'Cancelado' %}alert-danger{% elif agendamento.status == 'Finalizado' %}alert-success{% else %}alert-info{% endif %} text-center">
+        <h4>Status Atual: <strong>{{ agendamento.get_status_display }}</strong></h4>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"> Ficha do Animal</h5>
+                </div>
+                <div class="card-body">
+                    <h3>{{ agendamento.pet.nome }}</h3>
+                    <p>Serviço: <strong>{{ agendamento.servico.nome }}</strong></p>
+                    <p>Início: {{ agendamento.data_inicio|date:"H:i" }}</p>
+                    <p>Fim Previsto: {{ agendamento.data_fim|date:"H:i" }}</p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header">Produtos Consumidos</div>
+                <ul class="list-group list-group-flush">
+                    {% for consumo in agendamento.consumos.all %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            {{ consumo.produto.nome }}
+                            <span class="badge bg-secondary">x{{ consumo.quantidade }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Nenhum produto.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card p-4 shadow-sm">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if agendamento.status == 'Marcado' %}
+                        <h4 class="text-primary">Pronto para começar?</h4>
+                        <p>O cliente chegou? Inicie o cronômetro ou cancele o agendamento.</p>
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="iniciar_servico" class="btn btn-primary btn-lg"> INICIAR SERVIÇO</button>
+                            <button type="submit" name="cancelar_servico" class="btn btn-outline-danger"> Cancelar Agendamento</button>
+                        </div>
+
+                    {% elif agendamento.status == 'Em Serviço' %}
+                        <h4 class="text-warning">Em Andamento...</h4>
+                        
+                        <label class="fw-bold mt-3">Adicionar Consumo Interno</label>
+                        <div class="input-group mb-3">
+                            <select name="produto_id" class="form-select">
+                                <option value="">-- Produto --</option>
+                                {% for p in produtos %}
+                                <option value="{{ p.id }}">{{ p.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="number" name="produto_qtd" class="form-control" value="1" style="max-width: 70px;">
+                            <button type="submit" name="add_produto" class="btn btn-secondary">+</button>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" name="concluir_manual" class="btn btn-warning text-dark">🏁 Concluir (Enviar para Pagamento)</button>
+                            <button type="submit" name="cancelar_servico" class="btn btn-outline-danger btn-sm">Cancelar Serviço</button>
+                        </div>
+
+                    {% elif agendamento.status == 'Concluido' %}
+                        <h4 class="text-success"> Serviço Concluído!</h4>
+                        <p>Preencha o checklist e receba o pagamento.</p>
+
+                        <div class="mb-3">
+                            <label>Checklist Final</label>
+                            <textarea name="checklist" class="form-control" rows="2">{{ agendamento.checklist }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Notas</label>
+                            <input type="text" name="notas" class="form-control" value="{{ agendamento.observacoes_internas }}">
+                        </div>
+
+                        <div class="bg-light p-3 border rounded">
+                            <label class="fw-bold">Receber Pagamento (Valor: R$ {{ agendamento.servico.preco }})</label>
+                            <select name="pagamento" class="form-select mb-3" required>
+                                <option value="" selected disabled>-- Forma de Pagamento --</option>
+                                <option value="Numerario">Dinheiro</option>
+                                <option value="Multibanco">Cartão</option>
+                                <option value="MBWay">Pix/MBWay</option>
+                            </select>
+                            <button type="submit" name="realizar_pagamento" class="btn btn-success w-100 btn-lg"> FINALIZAR E RECEBER</button>
+                        </div>
+
+                    {% else %}
+                        <div class="text-center py-4">
+                            {% if agendamento.status == 'Finalizado' %}
+                                <h1 class="display-1"></h1>
+                                <h3>Atendimento Finalizado</h3>
+                                <p class="text-muted">Pago via: {{ agendamento.metodo_pagamento }}</p>
+                            {% else %}
+                                <h1 class="display-1"></h1>
+                                <h3>Atendimento Cancelado</h3>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

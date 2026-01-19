@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"> Novo Agendamento</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="fw-bold form-label">Selecione o Cliente / Pet</label>
+                        <div class="input-group">
+                            {{ form.pet }}
+                            <a href="{% url 'cadastro_cliente' %}" class="btn btn-success" title="Cadastrar Novo">
+                                + Novo
+                            </a>
+                        </div>
+                        <div class="form-text">Não encontrou? Clique em + Novo para cadastrar.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold form-label">Serviço</label>
+                        {{ form.servico }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold form-label">Data e Hora de Início</label>
+                        {{ form.data_inicio }}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Confirmar Agendamento</button>
+                        <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none text-center mt-2">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

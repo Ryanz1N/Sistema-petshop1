@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-gradient bg-primary text-white text-center py-4 rounded-top-4 border-0">
+                <h4 class="mb-0 fw-bold">Novo Acesso</h4>
+                <small class="opacity-75">Cadastro de Atendente</small>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                {{ form.first_name }}
+                                <label>Nome</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                {{ form.last_name }}
+                                <label>Sobrenome</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form.email }}
+                        <label>E-mail (Será seu login)</label>
+                        {% if form.email.errors %}
+                            <div class="text-danger small ms-2">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form.username }}
+                        <label>Usuário (Login alternativo)</label>
+                        <small class="text-muted ms-2" style="font-size: 0.75rem">Apenas letras minúsculas e números.</small>
+                        {% if form.username.errors %}
+                            <div class="text-danger small ms-2">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% for field in form %}
+                        {% if "password" in field.name %}
+                        <div class="form-floating mb-3">
+                            {{ field }}
+                            <label>{{ field.label }}</label>
+                            {% if field.help_text %}
+                                <div class="form-text small lh-sm mb-1">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm fw-bold">
+                            CADASTRAR E ACESSAR
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0 text-muted">Já tem cadastro?</p>
+                    <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-sm mt-2 px-4 rounded-pill">Fazer Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var inputs = document.querySelectorAll('input, select');
+        inputs.forEach(function(input) {
+            input.classList.add('form-control');
+            input.placeholder = "placeholder"; 
+        });
+    });
+</script>
+{% endblock %}

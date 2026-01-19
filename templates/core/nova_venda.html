@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 fw-bold"> Ponto de Venda</h4>
+                    <span class="badge bg-secondary">Venda de Produtos</span>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-4 bg-light p-3 rounded border">
+                            <label class="fw-bold mb-2">Cliente (Opcional)</label>
+                            {{ form.cliente }}
+                            <small class="text-muted d-block mt-1">Selecione para salvar no histórico do cliente ou deixe vazio para "Consumidor Final".</small>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3 text-secondary">Itens da Venda</h5>
+                        
+                        <div id="lista-produtos">
+                            <div class="row g-2 mb-2 align-items-center item-linha">
+                                <div class="col-8">
+                                    <select name="produto_id" class="form-select">
+                                        <option value="">-- Selecione o Produto --</option>
+                                        {% for p in produtos %}
+                                        <option value="{{ p.id }}">
+                                            {{ p.nome }} (R$ {{ p.preco_venda }} | Est: {{ p.quantidade }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Qtd</span>
+                                        <input type="number" name="produto_qtd" class="form-control" value="1" min="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-4 mt-2" onclick="adicionarLinha()">
+                            + Adicionar outro item
+                        </button>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
+                                Finalizar Venda
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-light text-muted">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function adicionarLinha() {
+        const container = document.getElementById('lista-produtos');
+        const primeiraLinha = container.querySelector('.item-linha');
+        
+        const novaLinha = primeiraLinha.cloneNode(true);
+
+        novaLinha.querySelector('select').value = "";
+        novaLinha.querySelector('input').value = "1";
+        
+
+        container.appendChild(novaLinha);
+    }
+</script>
+{% endblock %}
