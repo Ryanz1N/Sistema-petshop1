@@ -142,6 +142,7 @@ erDiagram
         int quantidade
         decimal subtotal
     }
+```
 
 Como Rodar o Projeto
 
