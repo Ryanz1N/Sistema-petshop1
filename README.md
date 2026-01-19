@@ -167,7 +167,7 @@ source venv/bin/activate
 
 3. Instalar dependências
 
-Instale o Django manualmente (caso não exista requirements.txt):
+Instale o Django manualmente:
 
 pip install django
 
